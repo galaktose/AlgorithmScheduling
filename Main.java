@@ -3,11 +3,9 @@ import java.util.Scanner;
 //abstract
 abstract class Processes{
         protected int processes;
-        protected int[] arrivalTimeArray;
-        protected int[] burstTimeArray;
+        protected int[] arrivalTime;
+        protected int[] burstTime;
         int count = 0;
-        int arrivalTime;
-        int burstTime;
 
         public abstract void Scheduler();
         Scanner scanner = new Scanner(System.in);
