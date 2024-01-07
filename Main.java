@@ -2,9 +2,7 @@ import java.util.Scanner;
 
 //abstract
 abstract class Processes{
-        protected int processes;
-        protected int[] arrivalTime;
-        protected int[] burstTime;
+        int processes;
         int count = 0;
 
         public abstract void Scheduler();
@@ -39,7 +37,8 @@ public class Main {
         System.out.print("Choice : ");
         choice = input.nextInt();
             if (choice == 1) {
-                
+                NonPreSJF SJF = new NonPreSJF();
+                SJF.Scheduler();
                 break;
             }
             else if (choice == 2) {
