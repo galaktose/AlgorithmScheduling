@@ -27,8 +27,8 @@ public class Main {
 
         System.out.println("Select a process scheduling method :");
         System.out.println("1. Shortest Job First(SJF) , Non Pre-emptive");
-        System.out.println("2. Non Pre-emptive Priority");
-        System.out.println("3. Pre-emptive Priority");
+        System.out.println("2. Pre-emptive SJF");
+        System.out.println("3. Non Pre-emptive Priority");
         System.out.println("4. Round Robin\n");
         
         //choose a process
@@ -42,7 +42,8 @@ public class Main {
                 break;
             }
             else if (choice == 2) {
-                
+                PreEmpSJF scheduler = PreEmpSJF.createSchedulerWithUserInput();
+                scheduler.runScheduler();
                 break;
             }
             else if (choice == 3) {
