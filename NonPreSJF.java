@@ -75,33 +75,37 @@ public class NonPreSJF extends Processes{
         //create process arrival time line
         String processArrival = "";
         count = 0;
+        boolean newProcess = false;
         for (int currentTime = 0; currentTime < scheduleTime; currentTime++) {
+        newProcess = false;
             for (int index = 0; index < processes; index++) {
                 if (arrivalTime[index] == currentTime) {
-                    processArrival = processArrival + "P" + processNumber[index] + "("+burstTime[index]+")" + "";
+                    processArrival = processArrival + "P" + processNumber[index] + "("+burstTime[index]+")" + "  ";
+                    newProcess = true;
                     break;
                 }
-                else
-                {
-                    processArrival = processArrival + "   ";
-                }
+            }
+            if (!newProcess) {
+                processArrival = processArrival + "       ";
             }
         }
 
         System.out.println("Shortest Job First(Non Preemptive) Gantt Chart \n");
         //check arrival time
        
+        //print gantt chart lines
         System.out.print("|");
         for (int i = 0; i < scheduleTime - 1; i++) {
             System.out.print("------|");
         }
+        //print numhers
         System.out.print("\n");
         for (int i = 0; i < scheduleTime; i++) {
-            if (i < 9) {
+            if (i < 10) {
                 System.out.print((i) + "      ");
             } 
             else {
-                System.out.print((i) + "   ");
+                System.out.print((i) + "     ");
             }
             
         }
