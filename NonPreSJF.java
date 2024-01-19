@@ -93,12 +93,12 @@ public class NonPreSJF extends Processes{
        
         //print gantt chart lines
         System.out.print("Chart Line      |");
-        for (int i = 0; i < scheduleTime; i++) {
+        for (int i = 0; i < scheduleTime + 1; i++) {
             System.out.print("------|");
         }
         //print numbers
         System.out.print("\n                ");
-        for (int i = 0; i < scheduleTime + 1; i++) {
+        for (int i = 0; i < scheduleTime + 2; i++) {
             if (i < 10) {
                 System.out.print((i) + "      ");
             } 
@@ -114,6 +114,7 @@ public class NonPreSJF extends Processes{
 
     }
 
+    //fix this
     private String processDisplay(int[] sortedArrival, int[] sortedBurst, int[] processTurns,int processes,int time)
     {
         StringBuilder taskDisplay = new StringBuilder();
@@ -128,7 +129,7 @@ public class NonPreSJF extends Processes{
     
                     // Add spaces before the process based on the remaining burst time
                     int remainingBurst = sortedBurst[index];
-                    for (int j = 0; j < remainingBurst - 1; j++) {
+                    for (int j = 0; j < remainingBurst; j++) {
                         taskDisplay.append("       ");
                     }
     
@@ -142,10 +143,10 @@ public class NonPreSJF extends Processes{
             if (!processArrived) {
                 switch (currentTime) {
                     case 0:
-                    taskDisplay.append("      ");
+                    taskDisplay.append(" idle ");
                         break;
                     default:
-                    taskDisplay.append("       ");
+                    taskDisplay.append(" idle  ");
                         break;
                 }
             }
