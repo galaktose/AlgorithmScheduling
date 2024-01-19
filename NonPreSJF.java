@@ -1,4 +1,5 @@
 public class NonPreSJF extends Processes{
+
     public void Scheduler()
     {
         System.out.println("Input number of processes : ");
@@ -6,6 +7,7 @@ public class NonPreSJF extends Processes{
         int arrivalTime[] = new int[processes];
         int burstTime[] = new int[processes];
         int processNumber[] = new int[processes];
+
         System.out.println("Input process information: ");
         while (count < processes) {
             System.out.println("Process " + (1 + count) + " Arrival Time : ");
@@ -50,20 +52,6 @@ public class NonPreSJF extends Processes{
             }
         }
 
-        //for testing purposes only
-        // for (int i = 0; i < processes; i++) {
-        //     System.out.print(arrivalTime[i] + " ");
-        // }
-        // System.out.println();
-        // for (int i = 0; i < processes; i++) {
-        //     System.out.print(burstTime[i] + " ");
-        // }
-        // System.out.println();
-        // for (int i = 0; i < processes; i++) {
-        //     System.out.print(processNumber[i] + " ");
-        // }
-        // System.out.println();
-
         //Non pre emptive SJF Gantt chart generation
 
         //check total time
@@ -73,7 +61,7 @@ public class NonPreSJF extends Processes{
         }
 
         //create process arrival time line
-        String processArrival = "";
+        String processArrival = "Process Arrival |";
         count = 0;
         boolean newProcess = false;
         for (int currentTime = 0; currentTime < scheduleTime; currentTime++) {
@@ -86,21 +74,31 @@ public class NonPreSJF extends Processes{
                 }
             }
             if (!newProcess) {
-                processArrival = processArrival + "       ";
+                switch (currentTime) {
+                    case 0:
+                    processArrival = processArrival + "      ";
+                        break;
+                
+                    default:
+                    processArrival = processArrival + "       ";
+                        break;
+                }
             }
         }
 
         System.out.println("Shortest Job First(Non Preemptive) Gantt Chart \n");
         //check arrival time
+
+        System.out.println(processDisplay(arrivalTime,burstTime,processNumber,processes, scheduleTime));
        
         //print gantt chart lines
-        System.out.print("|");
-        for (int i = 0; i < scheduleTime - 1; i++) {
+        System.out.print("Chart Line      |");
+        for (int i = 0; i < scheduleTime; i++) {
             System.out.print("------|");
         }
-        //print numhers
-        System.out.print("\n");
-        for (int i = 0; i < scheduleTime; i++) {
+        //print numbers
+        System.out.print("\n                ");
+        for (int i = 0; i < scheduleTime + 1; i++) {
             if (i < 10) {
                 System.out.print((i) + "      ");
             } 
@@ -112,29 +110,46 @@ public class NonPreSJF extends Processes{
         System.out.println("\n");
 
         
-        System.out.println(processArrival);
-
-        int remainingBurstTime[] = new int[processes];
-        for (int i = 0; i < processes; i++) {
-            remainingBurstTime[i] = burstTime[i];
-        }
-
-        
+        System.out.println(processArrival + "\n");
 
     }
 
-    private int findShortestJobIndex(int[] remainingBurstTime, int currentTime, int[] arrivalTime) {
-        int shortestJobIndex = -1;
-        int shortestBurstTime = Integer.MAX_VALUE;
+    private String processDisplay(int[] sortedArrival, int[] sortedBurst, int[] processTurns,int processes,int time)
+    {
+        StringBuilder taskDisplay = new StringBuilder();
+        taskDisplay.append("Process Ends    |");
 
-        for (int i = 0; i < processes; i++) {
-            if //(remainingBurstTime[i] > 0 && arrivalTime[i] <= currentTime && remainingBurstTime[i] < shortestBurstTime) {
-                (remainingBurstTime[i] > 0 && remainingBurstTime[i] < shortestBurstTime && arrivalTime[i] == currentTime){
-                shortestBurstTime = remainingBurstTime[i];
-                shortestJobIndex = i;
+        for (int currentTime = 0; currentTime < time; currentTime++) {
+            boolean processArrived = false;
+    
+            for (int index = 0; index < processes; index++) {
+                if (sortedArrival[index] == currentTime && sortedBurst[index] > 0) {
+                    processArrived = true;
+    
+                    // Add spaces before the process based on the remaining burst time
+                    int remainingBurst = sortedBurst[index];
+                    for (int j = 0; j < remainingBurst - 1; j++) {
+                        taskDisplay.append("       ");
+                    }
+    
+                    taskDisplay.append("P").append(processTurns[index]).append("(0)  ");
+                    sortedBurst[index]--;
+    
+                    break;
+                }
+            }
+    
+            if (!processArrived) {
+                switch (currentTime) {
+                    case 0:
+                    taskDisplay.append("      ");
+                        break;
+                    default:
+                    taskDisplay.append("       ");
+                        break;
+                }
             }
         }
-
-        return shortestJobIndex;
+        return taskDisplay.toString();
     }
 }
