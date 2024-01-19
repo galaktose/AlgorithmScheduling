@@ -8,7 +8,7 @@ public class RR {
         int num = scanner.nextInt();
 
         int B[] = new int[num];
-        int A[] = new int[num]; // Arrival time array
+        int A[] = new int[num];
 
         for (int i = 0; i < num; i++) {
             System.out.println("Enter the arrival time for p" + (i + 1));
@@ -62,12 +62,12 @@ public class RR {
                         }
                     }
                     currentTime += remainingBurst[currentProcess];
-                    turnaround[currentProcess] = currentTime - A[currentProcess]; // Turnaround time
+                    turnaround[currentProcess] = currentTime - A[currentProcess];
                     remainingBurst[currentProcess] = 0;
                 }
             }     
 
-            currentProcess = getNextProcess(A, remainingBurst, currentTime, num); // Get the next process to execute
+            currentProcess = getNextProcess(A, remainingBurst, currentTime, num);
 
         } while (!allProcessesCompleted(remainingBurst));
 
