@@ -1,107 +1,129 @@
 import java.util.Scanner;
-import java.util.ArrayList;
-import java.util.List;
-
-class ProcessRR {
-    String processName;
-    int arrivalTime;
-    int burstTime;
-    int remainingBurstTime;
-    int turnaroundTime;
-    int waitingTime;
-
-    public ProcessRR(String processName, int arrivalTime, int burstTime) {
-        this.processName = processName;
-        this.arrivalTime = arrivalTime;
-        this.burstTime = burstTime;
-        this.remainingBurstTime = burstTime;
-        this.turnaroundTime = 0;
-        this.waitingTime = 0;
-    }
-}
 
 public class RR {
-    public static void main(String[] args) {
+    public static void main(String args[]) {
         Scanner scanner = new Scanner(System.in);
 
-        System.out.print("Enter the number of processes (3-10): ");
-        int numProcesses = scanner.nextInt();
+        System.out.println("Enter number of processes: ");
+        int num = scanner.nextInt();
 
-        List<ProcessRR> processes = new ArrayList<>();
+        int B[] = new int[num];
+        int A[] = new int[num]; // Arrival time array
 
-        for (int i = 0; i < numProcesses; i++) {
-            System.out.println("\nEnter details for Process " + i);
+        for (int i = 0; i < num; i++) {
+            System.out.println("Enter the arrival time for p" + (i + 1));
+            A[i] = scanner.nextInt();
 
-            System.out.print("Arrival Time: ");
-            int arrivalTime = scanner.nextInt();
-
-            System.out.print("Burst Time: ");
-            int burstTime = scanner.nextInt();
-
-            processes.add(new ProcessRR("P" + i, arrivalTime, burstTime));
+            System.out.println("Enter the burst time for p" + (i + 1));
+            B[i] = scanner.nextInt();
         }
 
-        System.out.print("\nEnter Time Quantum for Round Robin: ");
-        int timeQuantum = scanner.nextInt();
+        // Sort processes based on arrival time
+        sortProcesses(A, B);
 
-        roundRobin(processes, timeQuantum);
+        System.out.println("Enter quantum time: ");
+        int q = scanner.nextInt();
 
-        for (ProcessRR process : processes) {
-            System.out.println("Process " + process.processName +
-                    " Turnaround Time: " + process.turnaroundTime +
-                    " Waiting Time: " + process.waitingTime);
+        int wait[] = new int[num];
+        int turnaround[] = new int[num];
+        int remainingBurst[] = new int[num];
+
+        for (int i = 0; i < num; i++) {
+            remainingBurst[i] = B[i];
         }
-    }
 
-    private static void roundRobin(List<ProcessRR> processes, int timeQuantum) {
-        int numProcesses = processes.size();
-        boolean[] processCompleted = new boolean[numProcesses];
         int currentTime = 0;
-    
-        List<String> ganttChart = new ArrayList<>();
-    
-        while (!allProcessesCompleted(processCompleted)) {
-            for (int i = 0; i < numProcesses; i++) {
-                if (processes.get(i).arrivalTime <= currentTime && !processCompleted[i]) {
-                    int executionTime;
-    
-                    if (timeQuantum < processes.get(i).remainingBurstTime) {
-                        executionTime = timeQuantum;
-                    } else {
-                        executionTime = processes.get(i).remainingBurstTime;
+        int currentProcess = 0; // Variable to keep track of the current process index
+
+        StringBuilder ganttChart = new StringBuilder("Gantt Chart: ");
+
+        do {
+            if (remainingBurst[currentProcess] > 0 && A[currentProcess] <= currentTime) {
+                ganttChart.append(" | p").append(currentProcess + 1).append(" ");
+
+                for (int i = 0; i < num; i++) {
+                    if (A[i] > currentTime && A[i] <= currentTime + q) {
+                        A[i] = currentTime + q;
+                    }  
+                } 
+
+                if (remainingBurst[currentProcess] > q) {
+                    for (int j = 0; j < num; j++) {
+                        if (j != currentProcess && remainingBurst[j] > 0 && A[j] <= currentTime) {
+                            wait[j] += q;
+                        }
                     }
-    
-                    processes.get(i).remainingBurstTime -= executionTime;
-                    currentTime += executionTime;
-    
-                    ganttChart.add(processes.get(i).processName + ": " + currentTime);
-    
-                    updateProcessStatus(processes, processCompleted, i, currentTime);
+                    remainingBurst[currentProcess] -= q;
+                    currentTime += q;
+                } else {
+                    for (int j = 0; j < num; j++) {
+                        if (j != currentProcess && remainingBurst[j] > 0 && A[j] <= currentTime) {
+                            wait[j] += remainingBurst[currentProcess];
+                        }
+                    }
+                    currentTime += remainingBurst[currentProcess];
+                    turnaround[currentProcess] = currentTime - A[currentProcess]; // Turnaround time
+                    remainingBurst[currentProcess] = 0;
                 }
-            }
+            }     
+
+            currentProcess = getNextProcess(A, remainingBurst, currentTime, num); // Get the next process to execute
+
+        } while (!allProcessesCompleted(remainingBurst));
+
+        System.out.println(ganttChart.toString());
+
+        System.out.println("Process\t\t\tWaiting Time\tTurnaround Time");
+
+        float totalWait = 0;
+        float totalTurnaround = 0;
+
+        for (int i = 0; i < num; i++) {
+            System.out.println("p" + (i + 1) + "\t\t\t" + wait[i] + "\t\t\t" + turnaround[i]);
+            totalWait += wait[i];
+            totalTurnaround += turnaround[i];
         }
-    
-        System.out.println("\nGantt Chart:");
-        for (String entry : ganttChart) {
-            System.out.print(entry + " | ");
-        }
-        System.out.println();
+
+        System.out.println("Average waiting time is: " + (totalWait / num));
+        System.out.println("Average turnaround time is: " + (totalTurnaround / num));
     }
-    
-    private static boolean allProcessesCompleted(boolean[] processCompleted) {
-        for (boolean completed : processCompleted) {
-            if (!completed) {
+
+    private static boolean allProcessesCompleted(int[] remainingBurst) {
+        for (int value : remainingBurst) {
+            if (value > 0) {
                 return false;
             }
         }
         return true;
     }
 
-    private static void updateProcessStatus(List<ProcessRR> processes, boolean[] processCompleted, int index, int currentTime) {
-        if (processes.get(index).remainingBurstTime <= 0) {
-            processCompleted[index] = true;
-            processes.get(index).turnaroundTime = currentTime - processes.get(index).arrivalTime;
-            processes.get(index).waitingTime = processes.get(index).turnaroundTime - processes.get(index).burstTime;
+    private static void sortProcesses(int[] arrivalTimes, int[] burstTimes) {
+        int n = arrivalTimes.length;
+        for (int i = 0; i < n - 1; i++) {
+            for (int j = 0; j < n - i - 1; j++) {
+                if (arrivalTimes[j] > arrivalTimes[j + 1]) {
+                    // Swap arrival times
+                    int tempArrival = arrivalTimes[j];
+                    arrivalTimes[j] = arrivalTimes[j + 1];
+                    arrivalTimes[j + 1] = tempArrival;
+
+                    // Swap burst times accordingly
+                    int tempBurst = burstTimes[j];
+                    burstTimes[j] = burstTimes[j + 1];
+                    burstTimes[j + 1] = tempBurst;
+                }
+            }
         }
+    }
+
+    private static int getNextProcess(int[] arrivalTimes, int[] remainingBurst, int currentTime, int num) {
+        int nextProcess = -1;
+        for (int i = 0; i < num; i++) {
+            if (remainingBurst[i] > 0 && arrivalTimes[i] <= currentTime) {
+                nextProcess = i;
+                break;
+            }
+        }
+        return nextProcess;
     }
 }
