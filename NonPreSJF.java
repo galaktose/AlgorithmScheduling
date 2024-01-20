@@ -35,22 +35,22 @@ public class NonPreSJF extends Processes{
         System.out.println(" ");
 
         //sort arrival times according to their length, with burst time and process number following suit
-        int tempInt = 0;
-        for (int index = 0; index < processes - 1; index++) {
-            if (arrivalTime[index] > arrivalTime[index+1]) {
-                tempInt = arrivalTime[index];
-                arrivalTime[index] = arrivalTime[index+1];
-                arrivalTime[index+1] = tempInt;
+        // int tempInt = 0;
+        // for (int index = 0; index < processes - 1; index++) {
+        //     if (arrivalTime[index] > arrivalTime[index+1]) {
+        //         tempInt = arrivalTime[index];
+        //         arrivalTime[index] = arrivalTime[index+1];
+        //         arrivalTime[index+1] = tempInt;
 
-                tempInt = burstTime[index];
-                burstTime[index] = burstTime[index+1];
-                burstTime[index+1] = tempInt;
+        //         tempInt = burstTime[index];
+        //         burstTime[index] = burstTime[index+1];
+        //         burstTime[index+1] = tempInt;
 
-                tempInt = processNumber[index];
-                processNumber[index] = processNumber[index+1];
-                processNumber[index+1] = tempInt;
-            }
-        }
+        //         tempInt = processNumber[index];
+        //         processNumber[index] = processNumber[index+1];
+        //         processNumber[index+1] = tempInt;
+        //     }
+        // }
 
         //Non pre emptive SJF Gantt chart generation
 
@@ -115,42 +115,60 @@ public class NonPreSJF extends Processes{
     }
 
     //fix this
-    private String processDisplay(int[] sortedArrival, int[] sortedBurst, int[] processTurns,int processes,int time)
+    private String processDisplay(int[] Arrival, int[] Burst, int[] processTurns,int processes,int time)
     {
         StringBuilder taskDisplay = new StringBuilder();
-        taskDisplay.append("Process Ends    |");
+        int[] queue = new int[processes];
+        int[] queueTurns= new int[processes];
+        int queueNumber = 0;
+        int arrivedProcesses = 0;
+        int finishedProcesses = 0;
+        boolean activeProcess = false;
+        taskDisplay.append("Process Ends   |");
 
         for (int currentTime = 0; currentTime < time; currentTime++) {
-            boolean processArrived = false;
-    
-            for (int index = 0; index < processes; index++) {
-                if (sortedArrival[index] == currentTime && sortedBurst[index] > 0) {
-                    processArrived = true;
-    
-                    // Add spaces before the process based on the remaining burst time
-                    int remainingBurst = sortedBurst[index];
-                    for (int j = 0; j < remainingBurst; j++) {
-                        taskDisplay.append("       ");
+            //check if there are any processes left in the queue
+            if (arrivedProcesses < processes) {
+                for (int index = 0; index < processes; index++) {
+                    if (Arrival[index] == currentTime && Burst[index] > 0) {
+                        //add it into the queue
+                        queue[queueNumber] = Burst[index];
+                        queueTurns[queueNumber] = processTurns[index];
+                        queueNumber++;
+                        arrivedProcesses++;
+                        break;
                     }
-    
-                    taskDisplay.append("P").append(processTurns[index]).append("(0)  ");
-                    sortedBurst[index]--;
-    
-                    break;
                 }
             }
-    
-            if (!processArrived) {
-                switch (currentTime) {
-                    case 0:
-                    taskDisplay.append(" idle ");
-                        break;
-                    default:
-                    taskDisplay.append(" idle  ");
-                        break;
+            // Check if there is an active process in the queue
+            if (arrivedProcesses > 0) {
+                // Execute the process at the front of the queue
+                if (queue[0] > 0) {
+                    queue[0] = queue[0] - 1;
+                    taskDisplay.append("       ");
                 }
+                else{
+                    taskDisplay.append("P").append(queueTurns[0]).append("(0)  ");
+                    finishedProcesses++;
+                    for (int i = 0; i < arrivedProcesses; i++) {
+                        queue[0] = queue[finishedProcesses];
+                        queueTurns[0] = queueTurns[finishedProcesses];
+                    }
+                    //queueNumber--;
+                    arrivedProcesses -= 1;
+                }    
             }
+            else{
+                taskDisplay.append("idle   ");
+            }
+    
         }
+        // for (int i = 0; i < queue.length; i++) {
+        //     System.out.print(queue[i]);
+        // }
+        // for (int i = 0; i < queue.length; i++) {
+        //     System.out.print(queueTurns[i]);
+        // }
         return taskDisplay.toString();
     }
 }
