@@ -8,6 +8,7 @@ public class NonPreSJF extends Processes{
         int burstTime[] = new int[processes];
         int processNumber[] = new int[processes];
 
+        //Accept user input for processes
         System.out.println("Input process information: ");
         while (count < processes) {
             System.out.println("Process " + (1 + count) + " Arrival Time : ");
@@ -18,6 +19,7 @@ public class NonPreSJF extends Processes{
             count++;
         }
 
+        //Display inputted user data
         System.out.println("Arrival Time: ");
         for (int i = 0; i < processes; i++) {
             System.out.print(arrivalTime[i] + " ");
@@ -34,24 +36,6 @@ public class NonPreSJF extends Processes{
         }
         System.out.println(" ");
 
-        //sort arrival times according to their length, with burst time and process number following suit
-        // int tempInt = 0;
-        // for (int index = 0; index < processes - 1; index++) {
-        //     if (arrivalTime[index] > arrivalTime[index+1]) {
-        //         tempInt = arrivalTime[index];
-        //         arrivalTime[index] = arrivalTime[index+1];
-        //         arrivalTime[index+1] = tempInt;
-
-        //         tempInt = burstTime[index];
-        //         burstTime[index] = burstTime[index+1];
-        //         burstTime[index+1] = tempInt;
-
-        //         tempInt = processNumber[index];
-        //         processNumber[index] = processNumber[index+1];
-        //         processNumber[index+1] = tempInt;
-        //     }
-        // }
-
         //Non pre emptive SJF Gantt chart generation
 
         //check total time
@@ -59,7 +43,7 @@ public class NonPreSJF extends Processes{
         for (int i = 0; i < processes; i++) {
             scheduleTime =scheduleTime + burstTime[i];
         }
-        scheduleTime += processes;
+        scheduleTime += processes; //prevent errors
 
         //create process arrival time line
         String processArrival = "Process Arrival|";
@@ -87,10 +71,11 @@ public class NonPreSJF extends Processes{
             }
         }
 
-        System.out.println("Shortest Job First(Non Preemptive) Gantt Chart \n");
-        //check arrival time
+        System.out.println("Shortest Job First(Non Preemptive) Gantt Chart \n_______________");
 
+        //Create the displayed string of when processes end
         System.out.println(processDisplay(arrivalTime,burstTime,processNumber,processes, scheduleTime));
+        System.out.println("_______________|");
        
         //print gantt chart lines
         System.out.print("Chart Line     ||");
@@ -98,7 +83,7 @@ public class NonPreSJF extends Processes{
             System.out.print("------|");
         }
         //print numbers
-        System.out.print("\n                ");
+        System.out.print("\n               |");
         for (int i = 0; i < scheduleTime + 2; i++) {
             if (i < 10) {
                 System.out.print((i) + "      ");
@@ -108,14 +93,13 @@ public class NonPreSJF extends Processes{
             }
             
         }
-        System.out.println("\n");
+        System.out.println("\n_______________|");
 
         
-        System.out.println(processArrival + "\n");
+        System.out.println(processArrival + "\n_______________|\n");
 
     }
 
-    //fix this
     private String processDisplay(int[] Arrival, int[] Burst, int[] processTurns,int processes,int time)
     {
         StringBuilder taskDisplay = new StringBuilder();
