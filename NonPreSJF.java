@@ -59,9 +59,10 @@ public class NonPreSJF extends Processes{
         for (int i = 0; i < processes; i++) {
             scheduleTime =scheduleTime + burstTime[i];
         }
+        scheduleTime += processes;
 
         //create process arrival time line
-        String processArrival = "Process Arrival |";
+        String processArrival = "Process Arrival|";
         count = 0;
         boolean newProcess = false;
         for (int currentTime = 0; currentTime < scheduleTime; currentTime++) {
@@ -122,13 +123,14 @@ public class NonPreSJF extends Processes{
         int[] queueTurns= new int[processes];
         int queueNumber = 0;
         int arrivedProcesses = 0;
-        int finishedProcesses = 0;
-        boolean activeProcess = false;
+        int tempInt;
+        boolean processSearch = true;
+        int queueLength = 0;
         taskDisplay.append("Process Ends   |");
 
         for (int currentTime = 0; currentTime < time; currentTime++) {
             //check if there are any processes left in the queue
-            if (arrivedProcesses < processes) {
+            if (arrivedProcesses < processes  && processSearch) {
                 for (int index = 0; index < processes; index++) {
                     if (Arrival[index] == currentTime && Burst[index] > 0) {
                         //add it into the queue
@@ -136,10 +138,15 @@ public class NonPreSJF extends Processes{
                         queueTurns[queueNumber] = processTurns[index];
                         queueNumber++;
                         arrivedProcesses++;
+                        queueLength++;
                         break;
                     }
                 }
             }
+            else{
+                processSearch = false;
+            }
+
             // Check if there is an active process in the queue
             if (arrivedProcesses > 0) {
                 // Execute the process at the front of the queue
@@ -149,17 +156,28 @@ public class NonPreSJF extends Processes{
                 }
                 else{
                     taskDisplay.append("P").append(queueTurns[0]).append("(0)  ");
-                    finishedProcesses++;
-                    for (int i = 0; i < arrivedProcesses; i++) {
-                        queue[0] = queue[finishedProcesses];
-                        queueTurns[0] = queueTurns[finishedProcesses];
+                    //sort the queue every time a process is finished in increasing order, but move all the 0s to the back
+                    for (int i = 0; i < queueLength - 1; i++) {
+                        for (int index = 0; index < queueLength - i - 1; index++) {
+                            if (queue[index] > queue[index+1] || queue[index] == 0) {
+                                tempInt = queue[index];
+                                queue[index] = queue[index+1];
+                                queue[index+1] = tempInt;
+
+                                tempInt = queueTurns[index];
+                                queueTurns[index] = queueTurns[index+1];
+                                queueTurns[index+1] = tempInt;
+                            }
+                        }
                     }
                     //queueNumber--;
+                    queue[0]--;
                     arrivedProcesses -= 1;
                 }    
             }
             else{
                 taskDisplay.append("idle   ");
+                time++;
             }
     
         }
