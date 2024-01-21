@@ -93,7 +93,7 @@ public class NonPreSJF extends Processes{
         System.out.println(processDisplay(arrivalTime,burstTime,processNumber,processes, scheduleTime));
        
         //print gantt chart lines
-        System.out.print("Chart Line      |");
+        System.out.print("Chart Line     ||");
         for (int i = 0; i < scheduleTime + 1; i++) {
             System.out.print("------|");
         }
@@ -170,23 +170,18 @@ public class NonPreSJF extends Processes{
                             }
                         }
                     }
-                    //queueNumber--;
+                    //remove 1 from the relevant integers
                     queue[0]--;
                     arrivedProcesses -= 1;
+                    queueLength--;
                 }    
             }
             else{
+                //if no process is active, display "idle"
                 taskDisplay.append("idle   ");
-                time++;
             }
     
         }
-        // for (int i = 0; i < queue.length; i++) {
-        //     System.out.print(queue[i]);
-        // }
-        // for (int i = 0; i < queue.length; i++) {
-        //     System.out.print(queueTurns[i]);
-        // }
         return taskDisplay.toString();
     }
 }
