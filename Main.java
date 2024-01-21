@@ -51,7 +51,8 @@ public class Main {
                 break;
             }
             else if (choice == 4) {
-
+                RR rrScheduler = new RR();
+                rrScheduler.Scheduler();
                 break;
             }
             else if (choice == 5) {
