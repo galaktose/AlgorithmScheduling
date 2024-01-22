@@ -42,7 +42,7 @@ public class Main {
                 break;
             }
             else if (choice == 2) {
-                PreEmpSJF scheduler = PreEmpSJF.createSchedulerWithUserInput();
+                PreEmpSJF scheduler = PreEmpSJF.requestProcess();
                 scheduler.runScheduler();
                 break;
             }
