@@ -7,23 +7,23 @@ class Process {
     int processId;
     int arrivalTime;
     int burstTime;
-    int endTime;
+    int timeProcessed;
 
     public Process(int processId, int arrivalTime, int burstTime) {
         this.processId = processId;
         this.arrivalTime = arrivalTime;
         this.burstTime = burstTime;
-        this.endTime = endTime;
+        this.timeProcessed = timeProcessed;
     }
 }
 
 class GanttChartEntry {
     String processId;
-    int endTime;
+    int timeProcessed;
 
-    public GanttChartEntry(String processId, int endTime) {
+    public GanttChartEntry(String processId, int timeProcessed) {
         this.processId = processId;
-        this.endTime = endTime;
+        this. timeProcessed= timeProcessed;
     }
 }
 public class PreEmpSJF {
@@ -37,14 +37,13 @@ public class PreEmpSJF {
 
     public void runScheduler() {
         AtomicInteger currentTime = new AtomicInteger(0);
-
         while (!processes.isEmpty()) {
             System.out.println("Processes: " + processes);
             processes.sort((p1, p2) -> {
                 // Check if both processes have arrived
                 boolean p1Arrived = p1.arrivalTime <= currentTime.get();
                 boolean p2Arrived = p2.arrivalTime <= currentTime.get();
-                System.out.println("p1Arrived : "+ p1Arrived + " p2Arrived : " + p2Arrived);
+                //System.out.println("p1Arrived : "+ p1Arrived + " p2Arrived : " + p2Arrived);
 
                 // If burst times are not equal, compare burst times
                 if (p1.burstTime != p2.burstTime && (p1Arrived == true && p2Arrived == true)) {
@@ -66,26 +65,25 @@ public class PreEmpSJF {
             Process currentProcess = processes.get(0);
             
             currentProcess.burstTime--;
-            currentTime.incrementAndGet();
-            
         
             System.out.println("Current Time: " + currentTime);
-            System.out.println("Executing Process: P" + currentProcess.processId);
+            //System.out.println("Executing Process: P" + currentProcess.processId);
+
+            ganttChart.add(new GanttChartEntry("P" + currentProcess.processId, currentTime.get()));
         
             if (currentProcess.burstTime == 0) {
-                currentProcess.endTime = currentTime.get();
+                currentProcess.timeProcessed = currentTime.get();
                 processes.remove(currentProcess);
-                ganttChart.add(new GanttChartEntry("P" + currentProcess.processId, currentTime.get()));
-                System.out.println("Process Completed. End Time: " + currentProcess.endTime);
+                System.out.println("Process Completed. End Time: " + currentProcess.timeProcessed);
                 
             }
             else {
                 processes.remove(currentProcess);
-                ganttChart.add(new GanttChartEntry("P" + currentProcess.processId, currentTime.get()));
                 processes.add(currentProcess);
             }
+            currentTime.incrementAndGet();
         }
-        
+        ganttChart.add(new GanttChartEntry("", currentTime.get()));
         printGanttChart();
 
     }
@@ -93,14 +91,25 @@ public class PreEmpSJF {
     public void printGanttChart() {
         System.out.println("Gantt Chart:");
     
-        for (GanttChartEntry entry : ganttChart) {
-            System.out.printf(entry.processId, entry.endTime);
+        for (GanttChartEntry entry0 : ganttChart) {
+            System.out.print(" | " + entry0.processId);
         }
-    
         System.out.println(); // Move to the next line for better readability
+        for (GanttChartEntry entry1 : ganttChart) {
+            if (entry1 == ganttChart.get(10)) {
+                break;
+            }
+            System.out.print(entry1.timeProcessed + "    ");
+            
+        }
+        for (int i = 10; i < ganttChart.size(); i++) {
+            GanttChartEntry entry2 = ganttChart.get(i);
+            System.out.print(entry2.timeProcessed +  "   ");
+        }
+        
     }
 
-    public static PreEmpSJF createSchedulerWithUserInput() {
+    public static PreEmpSJF requestProcess() {
         Scanner scanner = new Scanner(System.in);
 
         System.out.print("Enter the number of processes: ");
