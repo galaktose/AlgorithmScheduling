@@ -38,7 +38,7 @@ public class PreEmpSJF {
     public void runScheduler() {
         AtomicInteger currentTime = new AtomicInteger(0);
         while (!processes.isEmpty()) {
-            System.out.println("Processes: " + processes);
+            //System.out.println("Processes: " + processes);
             processes.sort((p1, p2) -> {
                 // Check if both processes have arrived
                 boolean p1Arrived = p1.arrivalTime <= currentTime.get();
@@ -66,7 +66,7 @@ public class PreEmpSJF {
             
             currentProcess.burstTime--;
         
-            System.out.println("Current Time: " + currentTime);
+            //System.out.println("Current Time: " + currentTime);
             //System.out.println("Executing Process: P" + currentProcess.processId);
 
             ganttChart.add(new GanttChartEntry("P" + currentProcess.processId, currentTime.get()));
@@ -117,7 +117,7 @@ public class PreEmpSJF {
 
         List<Process> processes = new ArrayList<>();
 
-        for (int i = 0; i <= numProcesses; i++) {
+        for (int i = 1; i <= numProcesses; i++) {
             System.out.print("Enter arrival time for Process P" + i + ": ");
             int arrivalTime = scanner.nextInt();
 
