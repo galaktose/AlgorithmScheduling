@@ -8,6 +8,7 @@ public class NonPreSJF extends Processes{
         int burstTime[] = new int[processes];
         int processNumber[] = new int[processes];
 
+        //Accept user input for processes
         System.out.println("Input process information: ");
         while (count < processes) {
             System.out.println("Process " + (1 + count) + " Arrival Time : ");
@@ -18,6 +19,7 @@ public class NonPreSJF extends Processes{
             count++;
         }
 
+        //Display inputted user data
         System.out.println("Arrival Time: ");
         for (int i = 0; i < processes; i++) {
             System.out.print(arrivalTime[i] + " ");
@@ -34,24 +36,6 @@ public class NonPreSJF extends Processes{
         }
         System.out.println(" ");
 
-        //sort arrival times according to their length, with burst time and process number following suit
-        // int tempInt = 0;
-        // for (int index = 0; index < processes - 1; index++) {
-        //     if (arrivalTime[index] > arrivalTime[index+1]) {
-        //         tempInt = arrivalTime[index];
-        //         arrivalTime[index] = arrivalTime[index+1];
-        //         arrivalTime[index+1] = tempInt;
-
-        //         tempInt = burstTime[index];
-        //         burstTime[index] = burstTime[index+1];
-        //         burstTime[index+1] = tempInt;
-
-        //         tempInt = processNumber[index];
-        //         processNumber[index] = processNumber[index+1];
-        //         processNumber[index+1] = tempInt;
-        //     }
-        // }
-
         //Non pre emptive SJF Gantt chart generation
 
         //check total time
@@ -59,9 +43,10 @@ public class NonPreSJF extends Processes{
         for (int i = 0; i < processes; i++) {
             scheduleTime =scheduleTime + burstTime[i];
         }
+        scheduleTime += processes; //prevent errors
 
         //create process arrival time line
-        String processArrival = "Process Arrival |";
+        String processArrival = "Process Arrival|";
         count = 0;
         boolean newProcess = false;
         for (int currentTime = 0; currentTime < scheduleTime; currentTime++) {
@@ -86,18 +71,19 @@ public class NonPreSJF extends Processes{
             }
         }
 
-        System.out.println("Shortest Job First(Non Preemptive) Gantt Chart \n");
-        //check arrival time
+        System.out.println("Shortest Job First(Non Preemptive) Gantt Chart \n_______________");
 
+        //Create the displayed string of when processes end
         System.out.println(processDisplay(arrivalTime,burstTime,processNumber,processes, scheduleTime));
+        System.out.println("_______________|");
        
         //print gantt chart lines
-        System.out.print("Chart Line      |");
+        System.out.print("Chart Line     ||");
         for (int i = 0; i < scheduleTime + 1; i++) {
             System.out.print("------|");
         }
         //print numbers
-        System.out.print("\n                ");
+        System.out.print("\n               |");
         for (int i = 0; i < scheduleTime + 2; i++) {
             if (i < 10) {
                 System.out.print((i) + "      ");
@@ -107,14 +93,13 @@ public class NonPreSJF extends Processes{
             }
             
         }
-        System.out.println("\n");
+        System.out.println("\n_______________|");
 
         
-        System.out.println(processArrival + "\n");
+        System.out.println(processArrival + "\n_______________|\n");
 
     }
 
-    //fix this
     private String processDisplay(int[] Arrival, int[] Burst, int[] processTurns,int processes,int time)
     {
         StringBuilder taskDisplay = new StringBuilder();
@@ -122,13 +107,14 @@ public class NonPreSJF extends Processes{
         int[] queueTurns= new int[processes];
         int queueNumber = 0;
         int arrivedProcesses = 0;
-        int finishedProcesses = 0;
-        boolean activeProcess = false;
+        int tempInt;
+        boolean processSearch = true;
+        int queueLength = 0;
         taskDisplay.append("Process Ends   |");
 
         for (int currentTime = 0; currentTime < time; currentTime++) {
             //check if there are any processes left in the queue
-            if (arrivedProcesses < processes) {
+            if (arrivedProcesses < processes  && processSearch) {
                 for (int index = 0; index < processes; index++) {
                     if (Arrival[index] == currentTime && Burst[index] > 0) {
                         //add it into the queue
@@ -136,10 +122,15 @@ public class NonPreSJF extends Processes{
                         queueTurns[queueNumber] = processTurns[index];
                         queueNumber++;
                         arrivedProcesses++;
+                        queueLength++;
                         break;
                     }
                 }
             }
+            else{
+                processSearch = false;
+            }
+
             // Check if there is an active process in the queue
             if (arrivedProcesses > 0) {
                 // Execute the process at the front of the queue
@@ -149,26 +140,32 @@ public class NonPreSJF extends Processes{
                 }
                 else{
                     taskDisplay.append("P").append(queueTurns[0]).append("(0)  ");
-                    finishedProcesses++;
-                    for (int i = 0; i < arrivedProcesses; i++) {
-                        queue[0] = queue[finishedProcesses];
-                        queueTurns[0] = queueTurns[finishedProcesses];
+                    //sort the queue every time a process is finished in increasing order, but move all the 0s to the back
+                    for (int i = 0; i < queueLength - 1; i++) {
+                        for (int index = 0; index < queueLength - i - 1; index++) {
+                            if (queue[index] > queue[index+1] || queue[index] == 0) {
+                                tempInt = queue[index];
+                                queue[index] = queue[index+1];
+                                queue[index+1] = tempInt;
+
+                                tempInt = queueTurns[index];
+                                queueTurns[index] = queueTurns[index+1];
+                                queueTurns[index+1] = tempInt;
+                            }
+                        }
                     }
-                    //queueNumber--;
+                    //remove 1 from the relevant integers
+                    queue[0]--;
                     arrivedProcesses -= 1;
+                    queueLength--;
                 }    
             }
             else{
+                //if no process is active, display "idle"
                 taskDisplay.append("idle   ");
             }
     
         }
-        // for (int i = 0; i < queue.length; i++) {
-        //     System.out.print(queue[i]);
-        // }
-        // for (int i = 0; i < queue.length; i++) {
-        //     System.out.print(queueTurns[i]);
-        // }
         return taskDisplay.toString();
     }
 }
