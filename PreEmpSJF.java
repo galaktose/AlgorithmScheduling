@@ -4,41 +4,59 @@ import java.util.Scanner;
 import java.util.concurrent.atomic.AtomicInteger;
 
 class Process {
-    int processId;
+    int processID;
     int arrivalTime;
     int burstTime;
     int timeProcessed;
 
-    public Process(int processId, int arrivalTime, int burstTime) {
-        this.processId = processId;
+    public Process(int processID, int arrivalTime, int burstTime) {
+        this.processID = processID;
         this.arrivalTime = arrivalTime;
         this.burstTime = burstTime;
-        this.timeProcessed = timeProcessed;
     }
 }
 
 class GanttChartEntry {
-    String processId;
+    String processID;
     int timeProcessed;
 
-    public GanttChartEntry(String processId, int timeProcessed) {
-        this.processId = processId;
+    public GanttChartEntry(String processID, int timeProcessed) {
+        this.processID = processID;
         this. timeProcessed= timeProcessed;
     }
 }
 public class PreEmpSJF {
+    AtomicInteger currentTime = new AtomicInteger(0);
     ArrayList<GanttChartEntry> ganttChart = new ArrayList<>();
     private List<Process> processes;
-
+    List<Integer> ListID = new ArrayList<>();
+    List<Integer> ListArrival = new ArrayList<>();
+    List<AtomicInteger> endTime = new ArrayList<>();
+    List<Integer> endProcess = new ArrayList<>();
     public PreEmpSJF(List<Process> processes) {
         this.processes = processes;
         this.ganttChart = new ArrayList<>();
+        this.ListID = new ArrayList<>();
+        this.ListArrival = new ArrayList<>();
+        this.endTime = new ArrayList<>();
+        this.endProcess = new ArrayList<>();
+        this.currentTime = new AtomicInteger();
     }
 
     public void runScheduler() {
-        AtomicInteger currentTime = new AtomicInteger(0);
+        
+        
+        //Saves the processID and arrival time for gantt chart generation (processes will be empty by the time gantt chart can be printed)
+        for (Process pro : processes) {
+            int processID = pro.processID;
+            int arrivalTime = pro.arrivalTime;
+
+            ListID.add(processID);
+            ListArrival.add(arrivalTime);
+        }
+        
         while (!processes.isEmpty()) {
-            //System.out.println("Processes: " + processes);
+            //System.out.println("Processes: " + processes);what
             processes.sort((p1, p2) -> {
                 // Check if both processes have arrived
                 boolean p1Arrived = p1.arrivalTime <= currentTime.get();
@@ -67,14 +85,17 @@ public class PreEmpSJF {
             currentProcess.burstTime--;
         
             //System.out.println("Current Time: " + currentTime);
-            //System.out.println("Executing Process: P" + currentProcess.processId);
+            //System.out.println("Executing Process: P" + currentProcess.processID);
 
-            ganttChart.add(new GanttChartEntry("P" + currentProcess.processId, currentTime.get()));
+            ganttChart.add(new GanttChartEntry("P" + currentProcess.processID, currentTime.get()));
         
             if (currentProcess.burstTime == 0) {
                 currentProcess.timeProcessed = currentTime.get();
                 processes.remove(currentProcess);
-                System.out.println("Process Completed. End Time: " + currentProcess.timeProcessed);
+                endProcess.add(currentProcess.processID);
+                endTime.add(currentTime);
+                
+                //System.out.println("Process Completed. End Time: " + currentProcess.timeProcessed);
                 
             }
             else {
@@ -90,21 +111,31 @@ public class PreEmpSJF {
 
     public void printGanttChart() {
         System.out.println("Gantt Chart:");
-    
+        //for (int i = 0; i < currentTime.get(); i++) {
+        //    
+        //} will be added later probably
         for (GanttChartEntry entry0 : ganttChart) {
-            System.out.print(" | " + entry0.processId);
+            System.out.print(" | " + entry0.processID);
         }
         System.out.println(); // Move to the next line for better readability
+        //prints the time up until 9 (for readability)
         for (GanttChartEntry entry1 : ganttChart) {
             if (entry1 == ganttChart.get(10)) {
                 break;
             }
-            System.out.print(entry1.timeProcessed + "    ");
-            
+            System.out.print(" " + entry1.timeProcessed + "   ");
         }
+        //prints the time from 10 until currentTime (for readability)
         for (int i = 10; i < ganttChart.size(); i++) {
             GanttChartEntry entry2 = ganttChart.get(i);
             System.out.print(entry2.timeProcessed +  "   ");
+        }
+        System.out.println();
+
+        //print arrival time in Pn(m) format where n is processID and m is arrivalTime
+        System.out.println("Arrival Time : ");
+        for (int i = 0; i < ListID.size(); i++) {
+            System.out.print("P" + ListID.get(i) + "(" + ListArrival.get(i) + ") ");
         }
         
     }
