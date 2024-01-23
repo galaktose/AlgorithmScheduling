@@ -8,11 +8,13 @@ class Process {
     int arrivalTime;
     int burstTime;
     int timeProcessed;
+    int endTime;
 
-    public Process(int processID, int arrivalTime, int burstTime) {
+    public Process(int processID, int arrivalTime, int burstTime, int endTime) {
         this.processID = processID;
         this.arrivalTime = arrivalTime;
         this.burstTime = burstTime;
+        this.endTime = endTime;
     }
 }
 
@@ -28,18 +30,17 @@ class GanttChartEntry {
 public class PreEmpSJF {
     AtomicInteger currentTime = new AtomicInteger(0);
     ArrayList<GanttChartEntry> ganttChart = new ArrayList<>();
+    ArrayList<GanttChartEntry> endTime = new ArrayList<>();
     private List<Process> processes;
     List<Integer> ListID = new ArrayList<>();
     List<Integer> ListArrival = new ArrayList<>();
-    List<AtomicInteger> endTime = new ArrayList<>();
-    List<Integer> endProcess = new ArrayList<>();
+
     public PreEmpSJF(List<Process> processes) {
         this.processes = processes;
         this.ganttChart = new ArrayList<>();
+        this.endTime = new ArrayList<>();
         this.ListID = new ArrayList<>();
         this.ListArrival = new ArrayList<>();
-        this.endTime = new ArrayList<>();
-        this.endProcess = new ArrayList<>();
         this.currentTime = new AtomicInteger();
     }
 
@@ -91,9 +92,10 @@ public class PreEmpSJF {
         
             if (currentProcess.burstTime == 0) {
                 currentProcess.timeProcessed = currentTime.get();
+                endTime.add(new GanttChartEntry("P" + currentProcess.processID, currentTime.get()));
+                System.out.println(endTime);
                 processes.remove(currentProcess);
-                endProcess.add(currentProcess.processID);
-                endTime.add(currentTime);
+                
                 
                 //System.out.println("Process Completed. End Time: " + currentProcess.timeProcessed);
                 
@@ -111,13 +113,29 @@ public class PreEmpSJF {
 
     public void printGanttChart() {
         System.out.println("Gantt Chart:");
-        //for (int i = 0; i < currentTime.get(); i++) {
-        //    
-        //} will be added later probably
+        
+        for (int i = 0; i < currentTime.get(); i++) {
+            boolean found = false;
+            for (int j = 0; j < endTime.size(); j++) {
+                if (endTime.get(j).timeProcessed == i) {
+                    // Print the process ID with the end time
+                    System.out.print("|" + endTime.get(j).processID + "(0)");
+                    found = true;
+                    break;
+                }
+            }
+            if (!found) {
+                // If no process ended at time i, print a blank space
+                System.out.print(" ____");
+            }
+        }
+        System.out.println();
         for (GanttChartEntry entry0 : ganttChart) {
             System.out.print(" | " + entry0.processID);
         }
+
         System.out.println(); // Move to the next line for better readability
+
         //prints the time up until 9 (for readability)
         for (GanttChartEntry entry1 : ganttChart) {
             if (entry1 == ganttChart.get(10)) {
@@ -125,6 +143,7 @@ public class PreEmpSJF {
             }
             System.out.print(" " + entry1.timeProcessed + "   ");
         }
+
         //prints the time from 10 until currentTime (for readability)
         for (int i = 10; i < ganttChart.size(); i++) {
             GanttChartEntry entry2 = ganttChart.get(i);
@@ -155,7 +174,7 @@ public class PreEmpSJF {
             System.out.print("Enter burst time for Process P" + i + ": ");
             int burstTime = scanner.nextInt();
 
-            processes.add(new Process(i, arrivalTime, burstTime));
+            processes.add(new Process(i, arrivalTime, burstTime,0));
             
         }
 
