@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Scanner;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -9,6 +10,8 @@ class Process {
     int burstTime;
     int timeProcessed;
     int endTime;
+    int turnaroundTime;
+    int waitingTime;
 
     public Process(int processID, int arrivalTime, int burstTime, int endTime) {
         this.processID = processID;
@@ -34,26 +37,36 @@ public class PreEmpSJF {
     private List<Process> processes;
     List<Integer> ListID = new ArrayList<>();
     List<Integer> ListArrival = new ArrayList<>();
+    List<Integer> ListBurstTime = new ArrayList<>();
+    List<Integer> ListTurnaroundTime = new ArrayList<>();
+    List<Integer> ListWaitingTime = new ArrayList<>();
+    int totalTurnaroundTime = 0;
+    int totalWaitingTime = 0;
 
     public PreEmpSJF(List<Process> processes) {
         this.processes = processes;
         this.ganttChart = new ArrayList<>();
-        this.endTime = new ArrayList<>();
+        this.endTime = new ArrayList<>(Collections.nCopies(processes.size(), null));
         this.ListID = new ArrayList<>();
         this.ListArrival = new ArrayList<>();
+        this.ListBurstTime = new ArrayList<>();
+         this.ListTurnaroundTime = new ArrayList<>(Collections.nCopies(processes.size(), 0));
+        this.ListWaitingTime = new ArrayList<>(Collections.nCopies(processes.size(), 0));
         this.currentTime = new AtomicInteger();
     }
 
     public void runScheduler() {
         
         
-        //Saves the processID and arrival time for gantt chart generation (processes will be empty by the time gantt chart can be printed)
+        //Saves the processID, arrival time and burst time for gantt chart generation (processes will be empty by the time gantt chart can be printed)
         for (Process pro : processes) {
             int processID = pro.processID;
             int arrivalTime = pro.arrivalTime;
+            int burstTime = pro.burstTime;
 
             ListID.add(processID);
             ListArrival.add(arrivalTime);
+            ListBurstTime.add(burstTime);
         }
         
         while (!processes.isEmpty()) {
@@ -92,8 +105,23 @@ public class PreEmpSJF {
         
             if (currentProcess.burstTime == 0) {
                 currentProcess.timeProcessed = currentTime.get();
-                endTime.add(new GanttChartEntry("P" + currentProcess.processID, currentTime.get()));
-                System.out.println(endTime);
+                GanttChartEntry entry = new GanttChartEntry("P" + currentProcess.processID, currentTime.get() + 1);
+                endTime.set(currentProcess.processID - 1, entry);
+                // Calculate turnaround time and waiting time
+                currentProcess.turnaroundTime = (currentProcess.timeProcessed + 1)- currentProcess.arrivalTime;
+                currentProcess.waitingTime = currentProcess.turnaroundTime - ListBurstTime.get(currentProcess.processID - 1);
+ 
+                // Store the calculated values in the lists
+                ListTurnaroundTime.set(currentProcess.processID - 1, currentProcess.turnaroundTime);
+                ListWaitingTime.set(currentProcess.processID - 1, currentProcess.waitingTime);
+                System.out.println("List turnaroundTime : " + ListTurnaroundTime);
+                System.out.println("List waiting time : " + ListWaitingTime);
+                System.out.println("List burst time : " + ListBurstTime);
+ 
+                // Update total turnaround and waiting times
+                totalTurnaroundTime += currentProcess.turnaroundTime;
+                totalWaitingTime += currentProcess.waitingTime;
+ 
                 processes.remove(currentProcess);
                 
                 
@@ -107,7 +135,9 @@ public class PreEmpSJF {
             currentTime.incrementAndGet();
         }
         ganttChart.add(new GanttChartEntry("", currentTime.get()));
+        
         printGanttChart();
+        printTable();
 
     }
 
@@ -157,6 +187,42 @@ public class PreEmpSJF {
             System.out.print("P" + ListID.get(i) + "(" + ListArrival.get(i) + ") ");
         }
         
+    }
+    
+    public void printTable() {
+        System.out.println("\nTable:");
+
+        System.out.printf("%-10s%-15s%-15s%-20s%-18s%-15s\n", "ProcessID", "Arrival Time", "Burst Time",
+                "Finishing Time", "Turnaround Time", "Waiting Time");
+
+        int n = ListID.size();
+        for (int i = 0; i < n; i++) {
+            int processID = ListID.get(i);
+            int arrivalTime = ListArrival.get(i);
+            int burstTime = ListBurstTime.get(i);
+            int finishingTime = endTime.get(i).timeProcessed;
+            int turnaroundTime = ListTurnaroundTime.get(i);
+            int waitingTime = ListWaitingTime.get(i);
+
+            System.out.printf("%-10d%-15d%-15d%-20d%-18d%-15d\n", processID, arrivalTime, burstTime, finishingTime,
+                    turnaroundTime, waitingTime);
+        }
+
+        int totalTurnaround = 0;
+        int totalWaiting = 0;
+
+        for (int i = 0; i < n; i++) {
+            totalTurnaround += ListTurnaroundTime.get(i);
+            totalWaiting += ListWaitingTime.get(i);
+        }
+
+        double averageTurnaround = (double) totalTurnaround / n;
+        double averageWaiting = (double) totalWaiting / n;
+
+        System.out.println("\nTotal Turnaround Time: " + totalTurnaround);
+        System.out.println("Average Turnaround Time: " + averageTurnaround);
+        System.out.println("Total Waiting Time: " + totalWaiting);
+        System.out.println("Average Waiting Time: " + averageWaiting);
     }
 
     public static PreEmpSJF requestProcess() {
