@@ -114,9 +114,6 @@ public class PreEmpSJF {
                 // Store the calculated values in the lists
                 ListTurnaroundTime.set(currentProcess.processID - 1, currentProcess.turnaroundTime);
                 ListWaitingTime.set(currentProcess.processID - 1, currentProcess.waitingTime);
-                System.out.println("List turnaroundTime : " + ListTurnaroundTime);
-                System.out.println("List waiting time : " + ListWaitingTime);
-                System.out.println("List burst time : " + ListBurstTime);
  
                 // Update total turnaround and waiting times
                 totalTurnaroundTime += currentProcess.turnaroundTime;
