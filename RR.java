@@ -227,7 +227,7 @@ public class RR extends Processes{
                                     + "%2d" + "           |" 
                                     + "%2d" + "               |" 
                                     + "%2d" + "            |", 
-                                    i, arrivalTime[i], burstTime[i], addTime.get(i), turnAroundTime[i], waitingTime[i]);
+                                    i, arrivalTime[i], burstTime2[i], addTime.get(i), turnAroundTime[i], waitingTime[i]);
 				
                 System.out.print("\n");
 				System.out.println("--------------------------------------------------------------------------------------");
