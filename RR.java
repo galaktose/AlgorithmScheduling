@@ -63,35 +63,32 @@ public class RR extends Processes{
         }
 
         boolean[] isReady = new boolean[processId.length];
+		LinkedList<Integer> ready = new LinkedList<Integer>();
 		
 		int limit = 0;
 		int totalBurstTime = 0;
-		//store the time 
-		ArrayList<Integer> chart = new ArrayList<Integer>();
-		//store the time (adding up)
-		ArrayList<Integer> addChart = new ArrayList<Integer>();
-		//track the p_id
-		ArrayList<Integer> track = new ArrayList<Integer>();
 		
-		LinkedList<Integer> ready = new LinkedList<Integer>();
+		ArrayList<Integer> time = new ArrayList<Integer>();
+		ArrayList<Integer> addTime = new ArrayList<Integer>();
+		ArrayList<Integer> processTime = new ArrayList<Integer>();
 		
 		int temp = 0;
 		
 		if(arrivalTime[temp] <= limit) {
 			if(burstTime[temp] > quantumTime) {
 				burstTime[temp] = burstTime[temp] - quantumTime;
-				chart.add(quantumTime);
-				track.add(processId[temp]);
+				time.add(quantumTime);
+				processTime.add(processId[temp]);
 				totalBurstTime += quantumTime;
-				addChart.add(totalBurstTime);
+				addTime.add(totalBurstTime);
 				limit = limit + quantumTime;
 			} 
 
 			else {
-				chart.add(burstTime[temp]);
-				track.add(processId[temp]);
+				time.add(burstTime[temp]);
+				processTime.add(processId[temp]);
 				totalBurstTime += burstTime[temp];
-				addChart.add(totalBurstTime);
+				addTime.add(totalBurstTime);
 				limit = limit + burstTime[temp];
 				burstTime[temp] = 0;
 			}
@@ -120,19 +117,19 @@ public class RR extends Processes{
 			if(arrivalTime[temp] <= limit) {
 				if(burstTime[temp] > quantumTime) {
 					burstTime[temp] = burstTime[temp] - quantumTime;
-					chart.add(quantumTime);
-					track.add(processId[temp]);
+					time.add(quantumTime);
+					processTime.add(processId[temp]);
 					totalBurstTime += quantumTime;
-					addChart.add(totalBurstTime);
+					addTime.add(totalBurstTime);
 					limit = limit + quantumTime;
 
 				} 
 
 				else {
-					chart.add(burstTime[temp]);
-					track.add(processId[temp]);
+					time.add(burstTime[temp]);
+					processTime.add(processId[temp]);
 					totalBurstTime += burstTime[temp];
-					addChart.add(totalBurstTime);
+					addTime.add(totalBurstTime);
 					limit = limit + burstTime[temp];
 					burstTime[temp] = 0;
 				}
@@ -153,15 +150,15 @@ public class RR extends Processes{
 
 		for(int i = 0; i < currentTime.length; i++) {
 			int index = 0;
-			for (int j = 0; j < track.size(); j++) {
-				if (i == track.get(j)){
+			for (int j = 0; j < processTime.size(); j++) {
+				if (i == processTime.get(j)){
 					index = j+1;
 				}
 			}
 
 			int s = 0;
 			for (int k = 0; k < index; k++) {
-				s = s + chart.get(k);
+				s = s + time.get(k);
 			}
 
 			currentTime[i] = s;
@@ -211,8 +208,8 @@ public class RR extends Processes{
         
         // Display Gantt Chart
         System.out.println("\nGantt Chart : \n");
-		for (int i = 0; i < track.size(); i++){
-			System.out.format("| P" + "%s" + " : " + "%2d" + "  ", track.get(i), addChart.get(i));
+		for (int i = 0; i < processTime.size(); i++){
+			System.out.format("| P" + "%s" + " : " + "%2d" + "  ", processTime.get(i), addTime.get(i));
 		}
 
 		System.out.print("|");
@@ -230,7 +227,7 @@ public class RR extends Processes{
                                     + "%2d" + "           |" 
                                     + "%2d" + "               |" 
                                     + "%2d" + "            |", 
-                                    i, arrivalTime[i], burstTime[i], addChart.get(i), turnAroundTime[i], waitingTime[i]);
+                                    i, arrivalTime[i], burstTime[i], addTime.get(i), turnAroundTime[i], waitingTime[i]);
 				
                 System.out.print("\n");
 				System.out.println("--------------------------------------------------------------------------------------");
