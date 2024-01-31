@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.InputMismatchException;
 import java.util.LinkedList;
 import java.util.Scanner;
 
@@ -8,8 +9,13 @@ public class RR extends Processes{
         int num = 0;
 
         while (num < 3 || num > 10) {
-            System.out.print("Enter number of process between 3 and 10 = ");
-            num = scanner.nextInt();
+            try {
+                System.out.print("Enter number of process between 3 and 10 = ");
+                num = scanner.nextInt();
+
+            } catch (InputMismatchException e) {
+                scanner.next();
+            }
         }
 
         int[] processId = new int[num];
@@ -17,51 +23,76 @@ public class RR extends Processes{
         int[] burstTime = new int[num];
         int[] burstTime2 = new int[num];
         int[] arrivalTime2 = new int[num];
-        int quantumTime;
+        int quantumTime = 0;
 
-        System.out.print("Enter quantum time = ");
-		quantumTime = scanner.nextInt();
+        while (quantumTime <= 0) {
+            try {
+                System.out.print("Enter quantum time = ");
+                quantumTime = scanner.nextInt();
 
-        for (int i = 0; i < num; i++){
-			System.out.print("Please enter P" + i + " Arrival Time = ");
-			arrivalTime[i] = scanner.nextInt();
-			arrivalTime2[i] = arrivalTime[i];
+            } catch (InputMismatchException e) {
+                scanner.next();
+            }
+        }
 
-            System.out.print("Please enter P" + i + " Burst Time = ");
-			burstTime[i] = scanner.nextInt();
-			burstTime2[i] = burstTime[i];
+        for (int i = 0; i < num; i++) {
+            boolean validInput = false;
 
-            processId[i] = i;
-		}
+            while (!validInput) {
+                try {
+                    System.out.print("Please enter P" + i + " Arrival Time = ");
+                    arrivalTime[i] = scanner.nextInt();
+                    arrivalTime2[i] = arrivalTime[i];
 
-        //Round Robin 
-		int temp0, temp4, temp5, temp6, temp7;
-		for (int i = 0; i < num; i++) {
-            for (int j = i + 1; j < num; j++) { 
-                if (arrivalTime[i] > arrivalTime[j]){
-                    temp0 = arrivalTime[i];
-                    arrivalTime[i] = arrivalTime[j];
-                    arrivalTime[j] = temp0;
-					
-					temp4 = processId[i];
-					processId[i] = processId[j];
-                    processId[j] = temp4;
-					
-					temp5 = burstTime[i];
-					burstTime[i] = burstTime[j];
-                    burstTime[j] = temp5;
-					
-					temp6 = arrivalTime2[i];
-					arrivalTime2[i] = arrivalTime2[j];
-                    arrivalTime2[j] = temp6;
-					
-					temp7 = burstTime2[i];
-					burstTime2[i] = burstTime2[j];
-                    burstTime2[j] = temp7;
+                    System.out.print("Please enter P" + i + " Burst Time = ");
+                    burstTime[i] = scanner.nextInt();
+                    burstTime2[i] = burstTime[i];
+
+                    processId[i] = i;
+
+                    validInput = true;
+
+                } catch (InputMismatchException e) {
+                    System.out.println("Please enter valid integers for Arrival Time and Burst Time.");
+                    scanner.next(); 
                 }
             }
         }
 
+        // Storing Temp Value
+		int tempArrivalTime; 
+		int tempProcessId; 
+		int tempBurstTime;
+		int tempArrivalTime2;
+		int tempBurstTime2;
+
+		for (int i = 0; i < num; i++) {
+            for (int j = i + 1; j < num; j++) { 
+                if (arrivalTime[i] > arrivalTime[j]){
+                    tempArrivalTime = arrivalTime[i];
+                    arrivalTime[i] = arrivalTime[j];
+                    arrivalTime[j] = tempArrivalTime;
+					
+					tempProcessId = processId[i];
+					processId[i] = processId[j];
+                    processId[j] = tempProcessId;
+					
+					tempBurstTime = burstTime[i];
+					burstTime[i] = burstTime[j];
+                    burstTime[j] = tempBurstTime;
+					
+					tempArrivalTime2 = arrivalTime2[i];
+					arrivalTime2[i] = arrivalTime2[j];
+                    arrivalTime2[j] = tempArrivalTime2;
+					
+					tempBurstTime2 = burstTime2[i];
+					burstTime2[i] = burstTime2[j];
+                    burstTime2[j] = tempBurstTime2;
+                }
+            }
+        }
+
+		// Round Robin Calculation
         boolean[] isReady = new boolean[processId.length];
 		LinkedList<Integer> ready = new LinkedList<Integer>();
 		
