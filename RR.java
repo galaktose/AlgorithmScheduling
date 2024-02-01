@@ -247,21 +247,20 @@ public class RR extends Processes{
 		System.out.print("\n\n");
 
         // Display Result
-		System.out.println("--------------------------------------------------------------------------------------");
-		System.out.println("| Process | Arrival Time | Burst Time | Finish Time | Turnaround Time | Waiting Time |");
+		System.out.println("Result :\n");
+		System.out.println(" Process | Arrival Time | Burst Time | Finish Time | Turnaround Time | Waiting Time ");
 		System.out.println("--------------------------------------------------------------------------------------");
 		
         for (int i = 0; i < turnAroundTime.length; i++){
-				System.out.format("| P" + "%s" + "      |" 
-                                    + "%2d" + "            |" 
-                                    + "%2d" + "          |" 
-                                    + "%2d" + "           |" 
-                                    + "%2d" + "               |" 
-                                    + "%2d" + "            |", 
+				System.out.format(" P" + "%s" + "      |" 
+                                    + " %2d" + "           |" 
+                                    + " %2d" + "         |" 
+                                    + " %2d" + "          |" 
+                                    + " %2d" + "              |" 
+                                    + " %2d" , 
                                     i, arrivalTime[i], burstTime2[i], addTime.get(i), turnAroundTime[i], waitingTime[i]);
 				
                 System.out.print("\n");
-				System.out.println("--------------------------------------------------------------------------------------");
 		}
 
         System.out.println("\nAverage Turnaround Time : " + averageTurnaround);
@@ -270,6 +269,6 @@ public class RR extends Processes{
         System.out.println("\nAverage Waiting Time : " + averageWaitingTime);
 		System.out.println("Total Waiting Time : " + totalWaitingTime);
 
-        System.out.println("\n");
+        System.out.println(" ");
     }
 }
