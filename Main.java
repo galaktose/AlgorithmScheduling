@@ -47,7 +47,8 @@ public class Main {
                 break;
             }
             else if (choice == 3) {
-                
+                PrePrioEMP Prio = new PrePrioEMP();
+                Prio.Scheduler();
                 break;
             }
             else if (choice == 4) {
