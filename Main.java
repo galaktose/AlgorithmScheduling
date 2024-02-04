@@ -54,6 +54,9 @@ public class Main {
             else if (choice == 3) {
                 PrePrioEMP Prio = new PrePrioEMP();
                 Prio.Scheduler();
+                Prio.outputProcesses();
+                System.out.println("~~~~~~~~~~~~~~~~~~~");
+                Prio.prioralgo();
                 break;
             }
             else if (choice == 4) {
