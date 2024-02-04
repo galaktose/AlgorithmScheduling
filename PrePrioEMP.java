@@ -4,7 +4,7 @@ import java.util.Scanner;
 public class PrePrioEMP extends Processes {
     public void Scheduler()
     {
-        System.out.println("Please input the nummber of processes :");
+        System.out.println("Please input the number of processes :");
         Scanner scanner = new Scanner(System.in);
         int NoP = scanner.nextInt();
         int Bt [] = new int[processes];

@@ -1,5 +1,10 @@
 import java.util.Scanner;
 
+//Group : TT8L
+//Noor Hannan Bin Noor Hamsuruddin 1211104293
+//Wan Muhammad Atif Bin Taram Satiraksa 1211103154
+//Muhammad Syahmi Bin Mohd Azmi 121101975
+//Syahmi
 //abstract
 abstract class Processes{
         int processes;
@@ -54,10 +59,6 @@ public class Main {
             else if (choice == 4) {
                 RR rrScheduler = new RR();
                 rrScheduler.Scheduler();
-                break;
-            }
-            else if (choice == 5) {
-
                 break;
             }
             else{
