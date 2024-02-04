@@ -70,14 +70,14 @@ public class PreEmpSJF {
         }
         
         while (!processes.isEmpty()) {
-            //System.out.println("Processes: " + processes);what
+            //Sort the list of processes following the criteria below. The list will be rearranged and the list at the first index is the highest priority.
             processes.sort((p1, p2) -> {
-                // Check if both processes have arrived
+                // Check if both compared processes have arrived
                 boolean p1Arrived = p1.arrivalTime <= currentTime.get();
                 boolean p2Arrived = p2.arrivalTime <= currentTime.get();
-                //System.out.println("p1Arrived : "+ p1Arrived + " p2Arrived : " + p2Arrived);
+                
 
-                // If burst times are not equal, compare burst times
+                // If burst times are not equal and p1 and p2 arrived, compare burst times
                 if (p1.burstTime != p2.burstTime && (p1Arrived == true && p2Arrived == true)) {
                     return Integer.compare(p1.burstTime, p2.burstTime);
                 } else {
@@ -93,19 +93,21 @@ public class PreEmpSJF {
                 }
             });
         
-            //Begin Processing
+            //Fetch the first process in the list after sorting (highest priority)
             Process currentProcess = processes.get(0);
             
+            //Begin Processing
             currentProcess.burstTime--;
-        
-            //System.out.println("Current Time: " + currentTime);
-            //System.out.println("Executing Process: P" + currentProcess.processID);
 
+            //Appends the ganttChart arraylist with the current process' ID and currenttime
             ganttChart.add(new GanttChartEntry("P" + currentProcess.processID, currentTime.get()));
-        
+            
+            //If current process burst time = 0
             if (currentProcess.burstTime == 0) {
                 currentProcess.timeProcessed = currentTime.get();
+                //Creates a new entry object containing the processID and current time + 1 (to fix the offset) 
                 GanttChartEntry entry = new GanttChartEntry("P" + currentProcess.processID, currentTime.get() + 1);
+                //Sets the process at their respective index number (corresponding to their Process ID)(this fixes the table generation issue)
                 endTime.set(currentProcess.processID - 1, entry);
                 // Calculate turnaround time and waiting time
                 currentProcess.turnaroundTime = (currentProcess.timeProcessed + 1)- currentProcess.arrivalTime;
@@ -121,11 +123,9 @@ public class PreEmpSJF {
  
                 processes.remove(currentProcess);
                 
-                
-                //System.out.println("Process Completed. End Time: " + currentProcess.timeProcessed);
-                
             }
             else {
+                //Remove the current process off the list and appends the process at the end of the list 
                 processes.remove(currentProcess);
                 processes.add(currentProcess);
             }
@@ -188,9 +188,8 @@ public class PreEmpSJF {
     
     public void printTable() {
         System.out.println("\nTable:");
-
-        System.out.printf("%-10s%-15s%-15s%-20s%-18s%-15s\n", "ProcessID", "Arrival Time", "Burst Time",
-                "Finishing Time", "Turnaround Time", "Waiting Time");
+        //Format a String header for a table with six columns, where each column has a fixed width and left justified.
+        System.out.printf("%-10s%-15s%-15s%-20s%-18s%-15s\n", "ProcessID", "Arrival Time", "Burst Time", "Finishing Time", "Turnaround Time", "Waiting Time");
 
         int n = ListID.size();
         for (int i = 0; i < n; i++) {
@@ -200,25 +199,16 @@ public class PreEmpSJF {
             int finishingTime = endTime.get(i).timeProcessed;
             int turnaroundTime = ListTurnaroundTime.get(i);
             int waitingTime = ListWaitingTime.get(i);
-
-            System.out.printf("%-10d%-15d%-15d%-20d%-18d%-15d\n", processID, arrivalTime, burstTime, finishingTime,
-                    turnaroundTime, waitingTime);
+        //Format a table with 6 columns containing integers where each column also has a fixed width and left justified.
+            System.out.printf("%-10d%-15d%-15d%-20d%-18d%-15d\n", processID, arrivalTime, burstTime, finishingTime, turnaroundTime, waitingTime);
         }
 
-        int totalTurnaround = 0;
-        int totalWaiting = 0;
+        double averageTurnaround = (double) totalTurnaroundTime / n;
+        double averageWaiting = (double) totalWaitingTime / n;
 
-        for (int i = 0; i < n; i++) {
-            totalTurnaround += ListTurnaroundTime.get(i);
-            totalWaiting += ListWaitingTime.get(i);
-        }
-
-        double averageTurnaround = (double) totalTurnaround / n;
-        double averageWaiting = (double) totalWaiting / n;
-
-        System.out.println("\nTotal Turnaround Time: " + totalTurnaround);
+        System.out.println("\nTotal Turnaround Time: " + totalTurnaroundTime);
         System.out.println("Average Turnaround Time: " + averageTurnaround);
-        System.out.println("Total Waiting Time: " + totalWaiting);
+        System.out.println("Total Waiting Time: " + totalWaitingTime);
         System.out.println("Average Waiting Time: " + averageWaiting);
     }
 
