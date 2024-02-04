@@ -50,6 +50,7 @@ public class Main {
                 PrePrioEMP Prio = new PrePrioEMP();
                 Prio.Scheduler();
                 Prio.outputProcesses();
+                System.out.println("~~~~~~~~~~~~~~~~~~~");
                 Prio.prioralgo();
                 break;
             }

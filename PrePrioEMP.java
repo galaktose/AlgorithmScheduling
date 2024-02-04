@@ -8,6 +8,7 @@ public class PrePrioEMP extends Processes {
     private int[] priveledged; 
     public int[] wait; 
     public int[] turnarounf; 
+    public int[] finish;
     private String[] id; 
     private Scanner scanner; 
 
@@ -69,9 +70,9 @@ public class PrePrioEMP extends Processes {
         prio[i] = prio[j];
         prio[j] = temp;
 
-        String tempStr = process[i];
+        String tempe = process[i];
         process[i] = process[j];
-        process[j] = tempStr;
+        process[j] = tempe;
     }
 
     public void prioralgo() {
@@ -82,6 +83,7 @@ public class PrePrioEMP extends Processes {
         String process[] = id.clone(); 
         int wait[] = new int[processes]; 
         int turnarounf[] = new int[processes]; 
+
 
         // Sort the processes
         sort(At, Bt, prio, process);
@@ -113,7 +115,44 @@ public class PrePrioEMP extends Processes {
         // Display zaresults
         System.out.println("Average Waiting Time: " + avgWaitTime);
         System.out.println("Average Turnaround Time: " + avgTurnarounf);
+        
+        //gantt chart usage
+        System.out.println("\nGantting :");
+    
+        // header
+        for (int i = 0; i < processes; i++) {
+            System.out.print("--------");
+        }
+        System.out.println();
+    
+        for (int i = 0; i < processes; i++) {
+            System.out.print("[" + id[i] + "]");
+        }
+        System.out.println(" ");
+    
+        for (int i = 0; i < processes; i++) {
+            System.out.print("--------");
+        }
+        System.out.println();
+    
+        // timeline content
+        int current = arrive[0];
+        for (int i = 0; i < processes; i++) {
+            while (current < finish[i]) {
+                System.out.print("|       ");
+                current++;
+            }
+            System.out.print("|  " + id[i] + "  ");
+        }
+        System.out.println("|");
+    
+        // feet
+        for (int i = 0; i < processes; i++) {
+            System.out.print("--------");
+        }
+        System.out.println("\n");
     }
+
 
     // outputting(real)
     public void outputProcesses() {
@@ -122,9 +161,36 @@ public class PrePrioEMP extends Processes {
         //header
         System.out.println("Process\tArrival\tBurst\tPriority");
         for (int i = 0; i < processes; i++) {
-            System.out.println(id[i] + "\t" + arrive[i] + "\t" + burst[i] + "\t" + priveledged[i] + "\t\t" /*+ wait + "\t" + turnarounf*/);
+            System.out.println(id[i] + "\t" + arrive[i] + "\t" + burst[i] + "\t" + priveledged[i] + "\t\t" /*+ wait + "\t" + turnarounf*/); 
         }
         
+
+        // int time = 0;
+        // for (int i = 0; i < processes; i++){
+        //     time = time + burst[i];
+        //     time += processes;
+        // }
+
+        // // Gantt chart header
+        // System.out.println("~~~~~~~~~~~~~~~~~~~");
+        // System.out.println("yip:");
+
+        // // The Gantt chart Top
+        // for (int i = 0; i < time; i++) {
+        //     System.out.print("+--");
+        // }
+        // System.out.print("+");
+        // System.out.println();
+
+        // // Print the timeline with process IDs
+        // for (Process process : ungh) {
+        //     for (int i = 0; i < process.burstTime; i++) {
+        //         System.out.print("|P" + id);
+        //     }
+        // }
+        // System.out.println("|");
+
+  
     }
     
 }
