@@ -4,7 +4,7 @@ import java.util.Scanner;
 //Noor Hannan Bin Noor Hamsuruddin 1211104293
 //Wan Muhammad Atif Bin Taram Satiraksa 1211103154
 //Muhammad Syahmi Bin Mohd Azmi 121101975
-//Syahmi
+//Syahmi Aufa Bin Usup 1221305485
 //abstract
 abstract class Processes{
         int processes;
