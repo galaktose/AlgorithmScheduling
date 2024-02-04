@@ -1,7 +1,6 @@
 import java.util.Scanner;
 
 public class PrePrioEMP extends Processes {
-<<<<<<< HEAD
 
     private int processes; 
     private int[] burst; 
@@ -98,21 +97,6 @@ public class PrePrioEMP extends Processes {
             finish[i] = Bt[i] + finish[i - 1]; 
             turnarounf[i] = finish[i] - At[i];
             wait[i] = turnarounf[i] - Bt[i]; 
-=======
-    public void Scheduler()
-    {
-        System.out.println("Please input the number of processes :");
-        Scanner scanner = new Scanner(System.in);
-        int NoP = scanner.nextInt();
-        int Bt [] = new int[processes];
-        int At [] = new int[processes];
-        int prio [] = new int[processes];
-        String process[] = new String[NoP];
-        int p = 1;
-        for (int i = 0; i < NoP; i++) {
-            process[i] = "P" + p;
-            p++;
->>>>>>> 868bd3594b3367be1ff4d761be5f795126c3ec99
         }
 
         float sum = 0; 
