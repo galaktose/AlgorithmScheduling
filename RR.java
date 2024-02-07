@@ -218,7 +218,7 @@ public class RR extends Processes{
 		}
 		
 		double averageTurnaround = 0;
-		int totalTurnaround = 0;
+		double totalTurnaround = 0;
 
 		for (int i = 0; i < turnAroundTime.length; i++) {
 			totalTurnaround += turnAroundTime[i];
@@ -228,7 +228,7 @@ public class RR extends Processes{
         averageTurnaround = totalTurnaround / processId.length;
 		
         double averageWaitingTime = 0;
-		int totalWaitingTime = 0;
+		double totalWaitingTime = 0;
 
 		for (int i = 0; i < waitingTime.length; i++) {
 			totalWaitingTime += waitingTime[i];
@@ -263,10 +263,10 @@ public class RR extends Processes{
                 System.out.print("\n");
 		}
 
-        System.out.println("\nAverage Turnaround Time : " + averageTurnaround);
+        System.out.printf("\nAverage Turnaround Time : %.2f%n", averageTurnaround);
 		System.out.println("Total Turnaround Time : " + totalTurnaround);
 
-        System.out.println("\nAverage Waiting Time : " + averageWaitingTime);
+        System.out.printf("\nAverage Waiting Time : %.2f%n", averageWaitingTime);
 		System.out.println("Total Waiting Time : " + totalWaitingTime);
 
         System.out.println(" ");
